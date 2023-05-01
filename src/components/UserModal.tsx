@@ -111,11 +111,12 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
 
   const isLocationFilled = (): boolean => {
     const { country, city, streetName, streetNumber } = editedUser.location;
-    return (isFieldLongEnough(country, 3) && isFieldLongEnough(city, 2) && isFieldLongEnough(streetName, 1) && isFieldLongEnough(streetNumber, 1));
+    return (isFieldLongEnough(country, 3) && isFieldLongEnough(city, 2) && isFieldLongEnough(streetName, 1));
   };
 
   const validateUser = (): boolean => {
-    return isNameValid() && isEmailValid() && isLocationFilled();
+     return  isNameValid() && isEmailValid() && isLocationFilled();
+    
   } 
   
   // Can be user for other changes, however currently it only serves email.
