@@ -1,5 +1,5 @@
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { User, UserState } from '../types';
 
@@ -36,7 +36,7 @@ export const userSlice = createSlice({
 
 export const { setUsers, updateUser, deleteUser, addUser } = userSlice.actions;
 
-export const fetchUsers = () => (dispatch) => {
+export const fetchUsers = () => (dispatch): any => {
     axios.get('https://randomuser.me/api/?results=10')
     .then(response => {
         const users: User[] = response.data.results.map((user) => ({
