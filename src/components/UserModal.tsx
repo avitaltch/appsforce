@@ -102,7 +102,7 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
   }
 
   const isEmailValid = () => {
-    const isEmailValidFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editedUser.email);
+    const isEmailValidFormat = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(editedUser.email);
     if(!isEmailValidFormat) {
       setError('Email format is not valid.');
     }
