@@ -1,60 +1,74 @@
-import { Avatar, Card, CardContent, Typography, TextField, CardActions, Button } from '@mui/material';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { User } from '../store/userSlice';
-import { useState } from 'react';
+import { IconButton, Stack, Divider, Avatar, Card, CardContent, Typography, CardActions, Button } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { User, nameToString, locationToString } from '../types';
+import styled from 'styled-components';
+import { deleteUser } from '../store/userSlice';
 import { useDispatch } from 'react-redux';
+import DeleteUserDialog from './DeleteUserDialog';
+import { useState } from 'react';
 
 interface UserCardProps {
     user: User;
-    onClose: () => void;
+    setSelectedUser?: any;
+}
+
+const UserCardWrapper = styled(Card)`
+  && {
+    height: 100%;
+    box-shadow: 0 0 5px #fff;
+    filter: drop-shadow(0 0 0.2em #646cffaa);
+    transition: all .3s ease-in-out;
+    &:hover {
+      transform: translateY(-3px);
+      filter: drop-shadow(0 0 0.3em #61dafbaa);
+    }
   }
-  
-  const UserCard: React.FC<UserCardProps> = ({ user, onClose }) => {
-    const [editedUser, setEditedUser] = useState<User>({ ...user });
+`;
+
+const UserCard: React.FC<UserCardProps> = ({ user, setSelectedUser }) => {
     const dispatch = useDispatch();
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setEditedUser({
-        ...editedUser,
-        [event.target.name]: event.target.value,
-      });
+    const handleEditClick = (user: User) => {
+        setSelectedUser(user);
     };
-  
-    const handleSaveClick = () => {
-        dispatch(updateUser(editedUser));
-      onClose();
+
+    const handleDeleteClick = (user: User) => {
+        dispatch(deleteUser(user));
     };
-  
+
+    
+    
     return (
-      <Card>
-        <CardContent>
-          <Typography variant="h5" component="h2">
-            {`${user.name.title} ${user.name.first} ${user.name.last}`}
-          </Typography>
-          <TextField
-            name="email"
-            label="Email"
-            value={editedUser.email}
-            onChange={handleInputChange}
-          />
-          <TextField
-            name="location.street"
-            label="Street"
-            value={editedUser.location.street}
-            onChange={handleInputChange}
-          />
-          {/* Add more input fields for other user properties */}
-        </CardContent>
-        <CardActions>
-          <Button size="small" onClick={handleSaveClick}>
-            Save
-          </Button>
-          <Button size="small" onClick={onClose}>
-            Cancel
-          </Button>
-        </CardActions>
-      </Card>
+        <>
+            <UserCardWrapper sx={{ height: '100%', borderRadius: '2rem' }}>
+                <CardContent>
+                        <Avatar src={user.image} alt={nameToString(user.name)} sx={{ width: 64, height: 64, margin: '1rem auto' }} />
+                        <Typography variant="h6" component="div">{nameToString(user.name)}</Typography>
+                        <Divider sx={{ m: 2 }} />
+                        <Typography variant="body2" color="text.primary">{user.email}</Typography>
+                        <Typography variant="body2" color="text.secondary">{locationToString(user.location)}</Typography>
+                </CardContent>
+                <CardActions sx={{ justifyContent: 'center', marginBottom: '1rem' }}>
+                    <Stack direction="row" spacing={1}>
+                        <Button variant="outlined" startIcon={<EditIcon /> } onClick={() => handleEditClick(user)}>
+                            <Typography variant="body1" color="text.primary">Edit Profile</Typography>
+                        </Button>
+                        <IconButton aria-label="delete" onClick={() => setDeleteDialogOpen(true)}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Stack>
+                </CardActions>
+            </UserCardWrapper>
+            { deleteDialogOpen ?
+                <DeleteUserDialog
+                    onClose={() => {setDeleteDialogOpen(false);}}
+                    onConfirm={() => {handleDeleteClick(user); setDeleteDialogOpen(false);}}
+                    user={user}
+            /> : null}
+        </>
     );
-  };
-
-  export default UserCard;
+};
+            
+export default UserCard;

@@ -1,18 +1,9 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { User, UserState } from '../types';
 
-export interface User {
-    id: string;
-    name: string;
-    email: string;
-    image: string;
-    location: string;
-}
 
-interface UserState {
-    users: User[];
-}
 
 const initialState: UserState = {
     users: [],
@@ -25,20 +16,35 @@ export const userSlice = createSlice({
         setUsers: (state, action: PayloadAction<User[]>) => {
             state.users = action.payload;
         },
-    },
+        updateUser(state, action: PayloadAction<User>) {
+            const { id } = action.payload;
+            const userIndex = state.users.findIndex(user => user.id === id);
+            if (userIndex !== -1) {
+                state.users[userIndex] = action.payload;
+            }
+        },
+        deleteUser(state, action: PayloadAction<User>) {
+            const { id } = action.payload;
+            const updatedUsers = state.users.filter(user => user.id !== id);
+            state.users = updatedUsers;
+        },
+        addUser(state, action: PayloadAction<User>) {
+            state.users.push(action.payload);
+        },
+    }
 });
 
-export const { setUsers } = userSlice.actions;
+export const { setUsers, updateUser, deleteUser, addUser } = userSlice.actions;
 
-export const fetchUsers = () => dispatch => {
+export const fetchUsers = () => (dispatch) => {
     axios.get('https://randomuser.me/api/?results=10')
     .then(response => {
-        const users = response.data.results.map(user => ({
+        const users: User[] = response.data.results.map((user) => ({
             id: user.login.uuid,
-            name: `${user.name.title} ${user.name.first} ${user.name.last}`,
+            name: { title: user.name.title, first: user.name.first, last: user.name.last },
             email: user.email,
             image: user.picture.medium,
-            location: `${user.location.country} ${user.location.city} ${user.location.street}`
+            location: { country: user.location.country, city: user.location.city, streetName: user.location.street.name, streetNumber: user.location.street.number }
         }));
         dispatch(setUsers(users));
     })

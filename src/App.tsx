@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from './store/userSlice';
 import { RootState } from './store';
 import UserList from './components/UserList';
+import { Grid } from '@mui/material'
 
 function App() {
   const users = useSelector((state: RootState) => state.user.users);
@@ -14,9 +15,14 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="App">
-      <UserList users={users} />
-    </div>
+    <Grid container spacing={2}>
+      <div className="UserList">
+        <UserList users={users} />
+      </div>
+      <div className="Content">
+        {/* Add content on the right side here */}
+      </div>
+    </Grid>
   );
 }
 
