@@ -110,7 +110,7 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
   }
 
   const isLocationFilled = (): boolean => {
-    const { country, city, streetName, streetNumber } = editedUser.location;
+    const { country, city, streetName } = editedUser.location;
     return (isFieldLongEnough(country, 3) && isFieldLongEnough(city, 2) && isFieldLongEnough(streetName, 1));
   };
 
